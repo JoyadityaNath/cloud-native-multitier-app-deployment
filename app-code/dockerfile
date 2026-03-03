@@ -1,0 +1,20 @@
+FROM python:3.12-alpine
+
+WORKDIR /app
+
+# Install build dependencies required for psutil
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    linux-headers \
+    python3-dev
+
+COPY ./src/backend ./backend
+COPY ./src/frontend ./frontend
+
+RUN pip install --no-cache-dir -r ./backend/requirements.txt
+
+WORKDIR /app/backend
+
+ENTRYPOINT ["python"]
+CMD ["app.py"]
