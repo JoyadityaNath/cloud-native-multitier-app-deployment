@@ -14,4 +14,3 @@ def test_health():
     assert response.status_code == 200
     data = json.loads(response.data)
     assert data["status"] == "ok"
-
