@@ -1,3 +1,11 @@
+"""
+Backend API service.
+
+Provides system metrics and health endpoints using Flask.
+"""
+
+
+
 import os
 import socket
 import requests
@@ -11,6 +19,9 @@ TIMEOUT = 2
 
 
 def get_imds_token():
+    """
+    get imds token
+    """
     try:
         response = requests.put(
             f"{IMDS_BASE_URL}/api/token",
@@ -19,11 +30,13 @@ def get_imds_token():
         )
         response.raise_for_status()
         return response.text
-    except Exception:
+    except requests.RequestException:
         return None
 
 
 def get_metadata(path):
+    """get metadata"""
+
     token = get_imds_token()
     headers = {"X-aws-ec2-metadata-token": token} if token else {}
     try:
@@ -34,22 +47,25 @@ def get_metadata(path):
         )
         response.raise_for_status()
         return response.text
-    except Exception:
+    except requests.RequestException:
         return "unavailable"
 
 
 @app.route("/")
 def serve_frontend():
+    """serve frontend files"""
     return send_from_directory(app.static_folder, "index.html")
 
 
 @app.route("/health")
 def health():
+    """health check route"""
     return jsonify({"status": "ok"})
 
 
 @app.route("/info")
 def info():
+    """pull aws services' info"""
     hostname = socket.gethostname()
     instance_id = get_metadata("instance-id")
     availability_zone = get_metadata("placement/availability-zone")

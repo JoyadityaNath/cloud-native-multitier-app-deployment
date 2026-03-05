@@ -1,8 +1,13 @@
+"""
+Unit tests for backend API endpoints.
+"""
+
 import json
 from app import app
 
 
 def test_health():
+    """test health function"""
     client = app.test_client()
     response = client.get("/health")
 
