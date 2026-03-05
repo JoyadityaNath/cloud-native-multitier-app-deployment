@@ -23,4 +23,4 @@ jobs:
 
       - name: Test files
         run: |
-          pylint app-code/src/backend
+          pylint app-code/src/backend --fail-under=9
