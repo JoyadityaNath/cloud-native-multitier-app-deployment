@@ -1,0 +1,25 @@
+name: Python Lint Check
+on: [push]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.12, 3.13]
+    steps:
+      - name: download code in runners
+        uses: actions/checkout@v4
+
+      - name: Setup Python versions
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -–upgrade pip
+          pip install pylint
+
+      - name: Test files
+        run: |
+          pylint app-code/src/backend
