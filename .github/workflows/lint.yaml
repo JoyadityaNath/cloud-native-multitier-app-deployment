@@ -1,8 +1,8 @@
 name: Python Lint Check
 on:
   push:
-  paths:
-    - app-code/src/backend/*
+    paths:
+      - app-code/src/backend/*
   workflow-dispatch:
 jobs:
   lint:
