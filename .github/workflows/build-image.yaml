@@ -1,0 +1,42 @@
+name: Build and Push to ECR
+
+on:
+  push:
+    paths:
+      - app-code/src/backend/*
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ap-south-1
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker Image
+        run: docker build -t cloud-multitier-application:${{ github.sha }} -f app-code/dockerfile app-code
+
+      - name: Tag Docker Image
+        run: |
+          docker tag cloud-multitier-application:${{ github.sha }} \
+          ${{ steps.login-ecr.outputs.registry }}/cloud-multitier-application:${{ github.sha }}
+
+      - name: Push Image
+        run: |
+          docker push \
+          ${{ steps.login-ecr.outputs.registry }}/cloud-multitier-application:${{ github.sha }}
