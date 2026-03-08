@@ -3,7 +3,7 @@ name: Build and Push to ECR
 on:
   push:
     paths:
-      - app-code/src/backend/*
+      - app-code/src/backend/**
   workflow_dispatch:
 
 jobs:
@@ -40,3 +40,19 @@ jobs:
         run: |
           docker push \
           ${{ steps.login-ecr.outputs.registry }}/cloud-multitier-application:${{ github.sha }}
+
+      - name: Update task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: terraform/modules/network/taskdefinition.json
+          container-name: cloud-multitier-application
+          image: ${{ steps.login-ecr.outputs.registry }}/cloud-multitier-application:${{ github.sha }}
+
+      - name: Deploy Task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          cluster: cloud-multitier-application-cluster
+          service: cloud-multitier-application-service
+          wait-for-service-stability: true

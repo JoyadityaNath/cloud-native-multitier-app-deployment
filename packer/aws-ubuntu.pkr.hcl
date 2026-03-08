@@ -8,7 +8,7 @@ packer {
 }
 
 source "amazon-ebs" "ubuntu" {
-  ami_name      = "docker-ssmagent-base-ubuntu22-v1"
+  ami_name      = "docker-ssmagent-ecsagent-base-ubuntu22-v1"
   instance_type = "t3.small"
   region        = "ap-south-1"
   source_ami_filter {
@@ -25,7 +25,7 @@ source "amazon-ebs" "ubuntu" {
 
 
 build {
-  name    = "docker-ssmagent-base-ubuntu22-v1"
+  name    = "docker-ssmagent-ecsagent-base-ubuntu22-v1"
   sources = ["source.amazon-ebs.ubuntu"]
 
 
@@ -37,6 +37,11 @@ provisioner "shell" {
 provisioner "shell" {
   # SSM Agent installation
   script="ssm-agent.sh"
+  execute_command="sudo -E bash '{{.Path}}'"
+}
+provisioner "shell"{
+  # ECS-Agent installation
+  script="ecs-agent.sh"
   execute_command="sudo -E bash '{{.Path}}'"
 }
 } 

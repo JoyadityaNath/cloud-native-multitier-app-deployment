@@ -1,5 +1,5 @@
 resource "aws_launch_template" "custom" {
-  name = "docker-ssm-template-asg"
+  name = "docker-ssm-ecs-template-asg"
   image_id = data.aws_ami.this.id
   instance_type = "t3.small"
   monitoring {
@@ -9,7 +9,7 @@ resource "aws_launch_template" "custom" {
     name = aws_iam_instance_profile.iam_instance_profile.name
   }
   vpc_security_group_ids = [ aws_security_group.launch_temp_sg.id ]
-
+  user_data = filebase64("${path.module}/user-data.sh")
 }
 
 

@@ -3,7 +3,7 @@ data "aws_ami" "this" {
 
   filter {
     name = "name"
-    values = [ "docker-ssmagent-base-ubuntu22-v1" ]
+    values = [ "docker-ssmagent-ecsagent-base-ubuntu22-v1" ]
   }
   owners = [ "175871674770" ]
 }
